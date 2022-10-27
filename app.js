@@ -28,32 +28,32 @@ app.post("/oneTimePassword", async (req, res) => {
     from: "saveleyub@gmail.com",
     to: email,
     subject: "Нэг удаагийн нууц үг",
-    text:`Таны нэг удаагийн нууц үг бол: ${password}`,
+    text: `Таны нэг удаагийн нууц үг бол: ${password}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log("error in sendEmail");
-      return console.log(error.message);
+      res.send("not send");
     }
-    db.set(email, {email, password});
+    db.set(email, { email, password });
     counter++;
     db.set("counter", counter);
-    res.status(200).send({ message: "send" });
+    res.status(200).send("send");
   });
 });
 
-app.post('/login' , async (req, res) => {
-  const {email, password} = req.body;
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
   if (db.has(email)) {
     const realPassword = db.get(email).password;
     if (realPassword === password) {
-      res.send('user');
+      res.send("user");
     }
   }
 
-  res.send('not user');
-})
+  res.send("not user");
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
