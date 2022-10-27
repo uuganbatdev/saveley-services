@@ -36,12 +36,24 @@ app.post("/oneTimePassword", async (req, res) => {
       console.log("error in sendEmail");
       return console.log(error.message);
     }
+    db.set(email, {email, password});
     counter++;
     db.set("counter", counter);
-    db.set(email, {email, password});
     res.status(200).send({ message: "send" });
   });
 });
+
+app.post('/login' , async (req, res) => {
+  const {email, password} = req.body;
+  if (db.has(email)) {
+    const realPassword = db.get(email).password;
+    if (realPassword === password) {
+      res.send('user');
+    }
+  }
+
+  res.send('not user');
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
